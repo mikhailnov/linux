@@ -60,6 +60,7 @@ $(obj)/signing_key.pem: $(obj)/x509.genkey
 	@$(kecho) "### needs to be run as root, and uses a hardware random"
 	@$(kecho) "### number generator if one is available."
 	@$(kecho) "###"
+# TODO: fix for LibreSSL/OpenSSL + GOST (Streebog)
 	$(Q)openssl req -new -nodes -utf8 -$(CONFIG_MODULE_SIG_HASH) -days 36500 \
 		-batch -x509 -config $(obj)/x509.genkey \
 		-outform PEM -out $(obj)/signing_key.pem \
