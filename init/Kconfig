@@ -2119,6 +2119,14 @@ config MODULE_SIG_SHA512
 	bool "Sign modules with SHA-512"
 	select CRYPTO_SHA512
 
+config MODULE_SIG_STREEBOG256
+	bool "Sign modules with STREEBOG-256"
+	select CRYPTO_STREEBOG
+
+config MODULE_SIG_STREEBOG512
+	bool "Sign modules with STREEBOG-512"
+	select CRYPTO_STREEBOG
+
 endchoice
 
 config MODULE_SIG_HASH
@@ -2129,6 +2137,8 @@ config MODULE_SIG_HASH
 	default "sha256" if MODULE_SIG_SHA256
 	default "sha384" if MODULE_SIG_SHA384
 	default "sha512" if MODULE_SIG_SHA512
+	default "streebog256" if MODULE_SIG_STREEBOG256
+	default "streebog512" if MODULE_SIG_STREEBOG512
 
 config MODULE_COMPRESS
 	bool "Compress modules on installation"
