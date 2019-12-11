@@ -1093,8 +1093,7 @@ include/config/kernel.release: FORCE
 # Carefully list dependencies so we do not try to build scripts twice
 # in parallel
 PHONY += scripts
-scripts: scripts_basic scripts_dtc
-	$(Q)$(MAKE) $(build)=$(@)
+scripts:
 
 # Things we need to do before we recursively start building the kernel
 # or the modules are listed in "prepare".
@@ -1112,7 +1111,7 @@ prepare0: archprepare
 	$(Q)$(MAKE) $(build)=.
 
 # All the preparing..
-prepare: prepare0 prepare-objtool
+prepare:
 
 # Support for using generic headers in asm-generic
 asm-generic := -f $(srctree)/scripts/Makefile.asm-generic obj
@@ -1363,15 +1362,8 @@ CLEAN_DIRS  += include/ksym
 CLEAN_FILES += modules.builtin.modinfo
 
 # Directories & files removed with 'make mrproper'
-MRPROPER_DIRS  += include/config include/generated          \
-		  arch/$(SRCARCH)/include/generated .tmp_objdiff \
-		  debian/ snap/ tar-install/
-MRPROPER_FILES += .config .config.old .version \
-		  Module.symvers \
-		  signing_key.pem signing_key.priv signing_key.x509	\
-		  x509.genkey extra_certificates signing_key.x509.keyid	\
-		  signing_key.x509.signer vmlinux-gdb.py \
-		  *.spec
+MRPROPER_DIRS  += ""
+MRPROPER_FILES += ""
 
 # Directories & files removed with 'make distclean'
 DISTCLEAN_DIRS  +=
@@ -1394,13 +1386,10 @@ clean: archclean vmlinuxclean
 #
 mrproper: rm-dirs  := $(wildcard $(MRPROPER_DIRS))
 mrproper: rm-files := $(wildcard $(MRPROPER_FILES))
-mrproper-dirs      := $(addprefix _mrproper_,scripts)
 
-PHONY += $(mrproper-dirs) mrproper
-$(mrproper-dirs):
-	$(Q)$(MAKE) $(clean)=$(patsubst _mrproper_%,%,$@)
+PHONY += mrproper
 
-mrproper: clean $(mrproper-dirs)
+mrproper: clean
 	$(call cmd,rmdirs)
 	$(call cmd,rmfiles)
 
