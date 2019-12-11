@@ -529,7 +529,7 @@ static void kauditd_printk_skb(struct sk_buff *skb)
 	char *data = nlmsg_data(nlh);
 
 	if (nlh->nlmsg_type != AUDIT_EOE && printk_ratelimit())
-		pr_notice("type=%d %s\n", nlh->nlmsg_type, data);
+		pr_debug("type=%d %s\n", nlh->nlmsg_type, data);
 }
 
 /**
