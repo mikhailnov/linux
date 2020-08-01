@@ -2871,12 +2871,26 @@ static struct swap_info_struct *alloc_swap_info(void)
 	return p;
 }
 
+#ifdef CONFIG_DISK_BASED_SWAP_DEFAULT_ON
+int sysctl_disk_based_swap __read_mostly = 1;
+#else
+int sysctl_disk_based_swap __read_mostly = 0;
+#endif
+
 static int claim_swapfile(struct swap_info_struct *p, struct inode *inode)
 {
 	int error;
 
 	if (S_ISBLK(inode->i_mode)) {
+		char name[BDEVNAME_SIZE];
 		p->bdev = bdgrab(I_BDEV(inode));
+		bdevname(p->bdev, name);
+		// If sysctl vm.disk_based_swap = false, prohibit any swaps but zram
+		if (!sysctl_disk_based_swap && strncmp(name, "zram", strlen("zram"))) {
+			bdput(p->bdev);
+			p->bdev = NULL;
+			return -EINVAL;
+		}
 		error = blkdev_get(p->bdev,
 				   FMODE_READ | FMODE_WRITE | FMODE_EXCL, p);
 		if (error < 0) {
@@ -2889,6 +2903,8 @@ static int claim_swapfile(struct swap_info_struct *p, struct inode *inode)
 			return error;
 		p->flags |= SWP_BLKDEV;
 	} else if (S_ISREG(inode->i_mode)) {
+		if (!sysctl_disk_based_swap)
+			return -EINVAL;
 		p->bdev = inode->i_sb->s_bdev;
 	}
 

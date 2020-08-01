@@ -35,6 +35,7 @@ Currently, these files are in /proc/sys/vm:
 - dirty_ratio
 - dirtytime_expire_seconds
 - dirty_writeback_centisecs
+- disk_based_swap
 - drop_caches
 - extfrag_threshold
 - hugetlb_shm_group
@@ -208,6 +209,13 @@ out to disk.  This tunable expresses the interval between those wakeups, in
 100'ths of a second.
 
 Setting this to zero disables periodic writeback altogether.
+
+disk_based_swap
+===============
+
+Disables (0) or enables (1) usage of disk-based swap, both swap files and
+swap partitions. When disabled, only zram swap can be used, and disk-based
+swap is prohibited then.
 
 
 drop_caches
