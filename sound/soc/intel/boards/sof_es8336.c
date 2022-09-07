@@ -303,6 +303,15 @@ static int sof_es8336_quirk_cb(const struct dmi_system_id *id)
  * if the topology file is modified as well.
  */
 static const struct dmi_system_id sof_es8336_quirk_table[] = {
+	/* Aquarius NS685U R11 (https://linux-hardware.org/?probe=339dc3db60) */
+	{
+		.callback = sof_es8336_quirk_cb,
+		.matches = {
+			DMI_MATCH(DMI_SYS_VENDOR, "AQUARIUS"),
+			DMI_MATCH(DMI_BOARD_NAME, "NS685Uv3"),
+		},
+		.driver_data = (void *)(SOC_ES8336_HEADSET_MIC1)
+	},
 	{
 		.callback = sof_es8336_quirk_cb,
 		.matches = {
