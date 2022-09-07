@@ -303,6 +303,25 @@ static int sof_es8336_quirk_cb(const struct dmi_system_id *id)
  * if the topology file is modified as well.
  */
 static const struct dmi_system_id sof_es8336_quirk_table[] = {
+	/* Aquarius NS685U R11 (https://linux-hardware.org/?probe=339dc3db60) */
+	{
+		.callback = sof_es8336_quirk_cb,
+		.matches = {
+			DMI_MATCH(DMI_SYS_VENDOR, "Aquarius"),
+			DMI_MATCH(DMI_PRODUCT_NAME, "NS685U R11"),
+		},
+		.driver_data = (void *)(SOF_ES8336_JD_INVERTED)
+	},
+	/* Aquarius NS685U (https://linux-hardware.org/?probe=988e1b3035) */
+	{
+		.callback = sof_es8336_quirk_cb,
+		.matches = {
+			DMI_MATCH(DMI_SYS_VENDOR, "Aquarius"),
+			/* it is not a typo! see dmidecode by the link above */
+			DMI_MATCH(DMI_PRODUCT_NAME, "win10 HOME rs10"),
+		},
+		.driver_data = (void *)(SOF_ES8336_JD_INVERTED)
+	},
 	{
 		.callback = sof_es8336_quirk_cb,
 		.matches = {
