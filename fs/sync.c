@@ -21,6 +21,30 @@
 #define VALID_FLAGS (SYNC_FILE_RANGE_WAIT_BEFORE|SYNC_FILE_RANGE_WRITE| \
 			SYNC_FILE_RANGE_WAIT_AFTER)
 
+// Deleted by commit
+// upstream: https://github.com/torvalds/linux/commit/9a208ba5c9afa62c7b1e9c6f5e783066e84e2d3c (5.16+)
+// backport to 5.10: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/fs/sync.c?h=linux-5.10.y&id=9255a42fe7ab65bc1972ed7452966199d47b7009
+// Restored because it is used in the AUFS patch
+// // mikhailnov, 11.10.2022
+/*
+ * Do the filesystem syncing work. For simple filesystems
+ * writeback_inodes_sb(sb) just dirties buffers with inodes so we have to
+ * submit IO for these buffers via __sync_blockdev(). This also speeds up the
+ * wait == 1 case since in that case write_inode() functions do
+ * sync_dirty_buffer() and thus effectively write one block at a time.
+ */
+int __sync_filesystem(struct super_block *sb, int wait)
+{
+	if (wait)
+		sync_inodes_sb(sb);
+	else
+		writeback_inodes_sb(sb, WB_REASON_SYNC);
+
+	if (sb->s_op->sync_fs)
+		sb->s_op->sync_fs(sb, wait);
+	return __sync_blockdev(sb->s_bdev, wait);
+}
+
 /*
  * Write out and wait upon all dirty data associated with this
  * superblock.  Filesystem data as well as the underlying block
